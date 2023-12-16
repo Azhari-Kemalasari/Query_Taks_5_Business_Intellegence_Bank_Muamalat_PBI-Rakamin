@@ -1,4 +1,15 @@
-WITH A AS (SELECT ProdNumber AS number, Date AS order_date, CustomerEmail AS cust_email, Quantity AS order_qty, CustomerCity AS cust_city FROM `project-sari-352013.Task_5.orders`  JOIN `project-sari-352013.Task_5.customers` on `project-sari-352013.Task_5.orders`.CustomerID =  `project-sari-352013.Task_5.customers`.CustomerID),
-B AS (SELECT  ProdNumber AS Number,ProdName AS product_name,Price AS product_price, CategoryName AS category_name FROM `project-sari-352013.Task_5.products` JOIN `project-sari-352013.Task_5.product_category` ON `project-sari-352013.Task_5.products`. Category = `project-sari-352013.Task_5.product_category`. CategoryID)
+WITH A AS (SELECT ProdNumber AS number, Date AS order_date, CONCAT(FirstName," ",LastName) AS cust_name, CustomerEmail AS cust_email, Quantity AS order_qty, CustomerCity AS cust_city FROM `project-sari-352013.Task_5.Orders`  JOIN `project-sari-352013.Task_5.Customers` on `project-sari-352013.Task_5.Orders`.CustomerID =  `project-sari-352013.Task_5.Customers`.CustomerID),
+B AS (SELECT  ProdNumber AS Number,ProdName AS product_name,Price AS product_price, CategoryName AS category_name FROM `project-sari-352013.Task_5.Products` JOIN `project-sari-352013.Task_5.ProductCategory` ON `project-sari-352013.Task_5.Products`. Category = `project-sari-352013.Task_5.ProductCategory`. CategoryID)
 
-SELECT A.order_date,B.category_name,B.product_name,B.product_price,A.order_qty,(B.product_price * A.order_qty) AS total_sales, A.cust_email, A.cust_city FROM A JOIN B ON A.number = B.Number ORDER BY A.order_date ASC;
+SELECT 
+  A.order_date,
+  A.cust_name,
+  REGEXP_EXTRACT(A.cust_email, r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+') AS cust_email,-- extract email dgn '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+ merupakan bentuk email bagian depan yang ingin diambil.
+  A.cust_city,
+  B.product_name,
+  B.category_name,
+  B.product_price,
+  A.order_qty,
+  (B.product_price * A.order_qty) AS total_sales,  
+FROM A JOIN B ON A.number = B.Number
+ORDER BY A.order_date ASC;
